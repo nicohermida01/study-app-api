@@ -20,3 +20,5 @@ export class CreateUserDTO {
   @IsString()
   lastName: string;
 }
+
+export interface ICreateUserDTO extends CreateUserDTO {}
