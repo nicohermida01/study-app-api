@@ -15,26 +15,17 @@ export class UsersService {
   }
 
   async findOneById(id: string): Promise<User> {
-    try {
-      const user = await this.userModel.findById(id).exec();
-      return user
-    } catch (error) {
-      console.log(error)
-    }
+    return await this.userModel.findById(id).exec();
   }
 
   async findByIdAndUpdate(id: string, values: IEditUserDTO): Promise<User> {
-    try {
-      const user = await this.userModel.findByIdAndUpdate(id, values, {new:true});
-      console.log(user, 'ACTUALIZADO');
-      return user;
-    } catch (error) {
-      console.log(error)
-    }
+    return await this.userModel.findByIdAndUpdate(id, values, {
+      new: true,
+    });
   }
 
   async findByIdAndDelete(id: string) {
-    return await this.userModel.findByIdAndDelete(id)
+    return await this.userModel.findByIdAndDelete(id);
   }
 
   async findAll(): Promise<User[]> {

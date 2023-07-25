@@ -19,25 +19,14 @@ export class CoursesService {
   }
 
   async getCourseById(id: string) {
-    try {
-      const course = await this.courseModel.findById(id).exec();
-      return course
-    } catch (error) {
-      console.log(error)
-    }
+    return await this.courseModel.findById(id).exec();
   }
 
   async findByIdAndUpdate(id: string, values: IEditCourseDTO): Promise<Course> {
-    try {
-      const course = await this.courseModel.findByIdAndUpdate(id, values, {new:true});
-      console.log(course, 'ACTUALIZADO');
-      return course;
-    } catch (error) {
-      console.log(error)
-    }
+    return await this.courseModel.findByIdAndUpdate(id, values, { new: true });
   }
 
   async findByIdAndDelete(id: string) {
-    return await this.courseModel.findByIdAndDelete(id)
+    return await this.courseModel.findByIdAndDelete(id);
   }
 }
