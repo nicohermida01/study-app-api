@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './schemas/user.schema';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ICreateUserDTO } from './dtos/createUser.dto';
 import { IEditUserDTO } from './dtos/editUser.dto';
@@ -8,6 +8,10 @@ import { IEditUserDTO } from './dtos/editUser.dto';
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+
+  async findOne(filter: FilterQuery<User>) {
+    return await this.userModel.findOne(filter);
+  }
 
   async create(createUser: ICreateUserDTO): Promise<User> {
     const createdUser = new this.userModel(createUser);
