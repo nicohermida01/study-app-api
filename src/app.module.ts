@@ -7,7 +7,12 @@ import { CoursesModule } from './modules/courses/courses.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://127.0.0.1/study'),
+    MongooseModule.forRoot('mongodb://127.0.0.1/study', {
+      connectionFactory: (connection) => {
+        connection.plugin(require('mongoose-unique-validator'));
+        return connection;
+      }
+    }),
     UsersModule,
     CoursesModule,
   ], // change into .env

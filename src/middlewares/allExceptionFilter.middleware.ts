@@ -18,8 +18,14 @@ export class AllExceptionsFilters extends BaseExceptionFilter {
         path: request.url,
         message: 'Id provided is wrong',
       });
+    } else if (exception.name === 'ValidationError') {
+      response.status(400).json({
+        statusCode: 400,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+        message: 'Username or email already taken.',
+      });
     }
-
     super.catch(exception, host);
   }
 }
