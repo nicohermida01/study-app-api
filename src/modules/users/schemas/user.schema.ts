@@ -1,18 +1,18 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-@Schema({ timestamps: true, toJSON: {
-	transform: (document, returnedObject) => {
-		returnedObject.id = returnedObject._id
-		delete returnedObject._id
-		delete returnedObject.__v
-		delete returnedObject.password
-	}},
+@Schema({
+  timestamps: true,
+  toJSON: {
+    transform: (document, returnedObject) => {
+      returnedObject.id = returnedObject._id;
+      delete returnedObject._id;
+      delete returnedObject.__v;
+      delete returnedObject.password;
+    },
+  },
 })
 export class User {
-  @Prop({ required: true, unique: true })
-  username: string;
-
   @Prop({ required: true })
   password: string;
 

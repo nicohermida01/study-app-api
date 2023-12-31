@@ -21,7 +21,7 @@ export class UsersController {
   @Post('/login')
   async loginUser(@Body() dto: LoginUserDTO) {
     const user = await this.userService.findOne({
-      username: dto.username,
+      email: dto.email,
     });
 
     const passwordCorrect =
@@ -35,7 +35,7 @@ export class UsersController {
 
     return {
       id: user._id,
-      username: user.username,
+      email: user.email,
     };
   }
 
