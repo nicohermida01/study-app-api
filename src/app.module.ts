@@ -4,18 +4,23 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
 import { CoursesModule } from './modules/courses/courses.module';
+import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://127.0.0.1/study', {
+      // change into .env
       connectionFactory: (connection) => {
         connection.plugin(require('mongoose-unique-validator'));
         return connection;
-      }
+      },
     }),
     UsersModule,
     CoursesModule,
-  ], // change into .env
+    ConfigModule.forRoot(),
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
