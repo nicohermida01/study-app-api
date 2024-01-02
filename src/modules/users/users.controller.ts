@@ -6,7 +6,6 @@ import {
   Patch,
   Delete,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { EditUserDTO } from './dtos/editUser.dto';

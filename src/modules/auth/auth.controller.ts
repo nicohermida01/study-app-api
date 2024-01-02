@@ -13,12 +13,14 @@ import { LoginAuthDto } from './dtos/login-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { IJwtPayloadAuth } from './interfaces/jwt-auth-payload.interface';
 import { Response } from 'express';
+import { CookieService } from '../cookie/cookie.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
+    private cookieService: CookieService,
   ) {}
 
   @Post('register')
@@ -53,17 +55,15 @@ export class AuthController {
 
     const token = this.jwtService.sign(payload);
 
-    res.cookie('accessToken', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none', // if the domain of api and front is the same, set to 'strict'
-      maxAge: 1000 * 60 * 60 * 24 * 1, // expires in 1 day
-      path: '/',
-    });
+    this.cookieService.setAccessToken(token, res);
 
-    res.json('Logged Succesfully');
+    res.json('Logged Succesfully'); // change into message response const
   }
 
   @Get('logout')
-  async logoutUser() {}
+  async logoutUser(@Res() res: Response) {
+    this.cookieService.removeAccessToken(res);
+
+    res.json('Logout successfully'); // change into message response const
+  }
 }

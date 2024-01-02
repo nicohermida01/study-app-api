@@ -6,6 +6,7 @@ import { UsersModule } from './modules/users/users.module';
 import { CoursesModule } from './modules/courses/courses.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
+import { CookieModule } from './modules/cookie/cookie.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AuthModule } from './modules/auth/auth.module';
     CoursesModule,
     ConfigModule.forRoot(),
     AuthModule,
+    CookieModule,
   ],
   controllers: [AppController],
   providers: [AppService],
