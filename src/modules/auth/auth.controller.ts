@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { LoginAuthDto } from './dtos/login-auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { IJwtPayloadAuth } from './interfaces/jwt-auth-payload.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -37,9 +38,9 @@ export class AuthController {
       throw new UnauthorizedException('invalid username or password');
     }
 
-    const payload = {
+    const payload: IJwtPayloadAuth = {
       name: `${foundUser.firstName} ${foundUser.lastName}`,
-      id: foundUser._id,
+      userId: foundUser._id,
     };
 
     const token = this.jwtService.sign(payload);
