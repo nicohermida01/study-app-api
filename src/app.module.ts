@@ -13,7 +13,9 @@ import { CookieModule } from './modules/cookie/cookie.module';
     MongooseModule.forRoot('mongodb://127.0.0.1/study', {
       // change into .env
       connectionFactory: (connection) => {
-        connection.plugin(require('mongoose-unique-validator'));
+        connection.plugin(require('mongoose-unique-validator'), {
+          message: '{PATH} already taken',
+        });
         return connection;
       },
     }),

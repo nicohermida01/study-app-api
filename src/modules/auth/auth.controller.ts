@@ -14,6 +14,12 @@ import { JwtService } from '@nestjs/jwt';
 import { IJwtPayloadAuth } from './interfaces/jwt-auth-payload.interface';
 import { Response } from 'express';
 import { CookieService } from '../cookie/cookie.service';
+import {
+  LOGGED_SUCCESSFULLY_MESSAGE,
+  LOGOUT_SUCCESSFULLY_MESSAGE,
+  USER_REGISTER_SUCCESSFULLY_MESSAGE,
+} from 'src/ssot/successMessages';
+import { INVALID_LOGIN_ERROR_MESSAGE } from 'src/ssot/errorMessages';
 
 @Controller('auth')
 export class AuthController {
@@ -30,7 +36,10 @@ export class AuthController {
 
     const newUser = await this.userService.create(dto);
 
-    return newUser;
+    return {
+      message: USER_REGISTER_SUCCESSFULLY_MESSAGE,
+      user: newUser,
+    };
   }
 
   @Post('login')
@@ -45,7 +54,7 @@ export class AuthController {
         : await bcrypt.compare(dto.password, foundUser.password);
 
     if (!(foundUser && passwordCorrect)) {
-      throw new UnauthorizedException('invalid username or password');
+      throw new UnauthorizedException(INVALID_LOGIN_ERROR_MESSAGE);
     }
 
     const payload: IJwtPayloadAuth = {
@@ -57,13 +66,17 @@ export class AuthController {
 
     this.cookieService.setAccessToken(token, res);
 
-    res.json('Logged Succesfully'); // change into message response const
+    res.json({
+      message: LOGGED_SUCCESSFULLY_MESSAGE,
+    });
   }
 
   @Get('logout')
   async logoutUser(@Res() res: Response) {
     this.cookieService.removeAccessToken(res);
 
-    res.json('Logout successfully'); // change into message response const
+    res.json({
+      message: LOGOUT_SUCCESSFULLY_MESSAGE,
+    });
   }
 }

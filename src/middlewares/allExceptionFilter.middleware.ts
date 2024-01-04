@@ -1,31 +1,53 @@
-import { ArgumentsHost, Catch } from '@nestjs/common';
-import { BaseExceptionFilter } from '@nestjs/core';
-import { Request, Response } from 'express';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import { HttpAdapterHost } from '@nestjs/core';
+import {
+  DEFAULT_MESSAGE_ERROR,
+  MONGOOSE_CAST_ERROR_MESSAGE,
+} from 'src/ssot/errorMessages';
+import {
+  MONGOOSE_CAST_ERROR,
+  MONGOOSE_VALIDATION_ERROR,
+} from 'src/ssot/errors';
 
 @Catch()
-export class AllExceptionsFilters extends BaseExceptionFilter {
-  catch(exception: any, host: ArgumentsHost) {
+export class AllExceptionsFilters implements ExceptionFilter {
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+
+  catch(exception: any, host: ArgumentsHost): void {
+    const { httpAdapter } = this.httpAdapterHost;
+
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
 
-    console.error(exception);
+    let message;
+    let httpStatus;
 
-    if (exception.name === 'CastError') {
-      response.status(400).json({
-        statusCode: 400,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-        message: 'Id provided is wrong',
-      });
-    } else if (exception.name === 'ValidationError') {
-      response.status(400).json({
-        statusCode: 400,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-        message: 'Username or email already taken.',
-      });
+    if (exception instanceof HttpException) {
+      httpStatus = exception.getStatus();
+      message = exception.getResponse()['message'];
+    } else if (exception.name === MONGOOSE_VALIDATION_ERROR) {
+      httpStatus = 400;
+      message = exception.errors[Object.keys(exception.errors)[0]].message;
+    } else if (exception.name === MONGOOSE_CAST_ERROR) {
+      httpStatus = 400;
+      message = MONGOOSE_CAST_ERROR_MESSAGE;
+    } else {
+      httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+      message = DEFAULT_MESSAGE_ERROR;
     }
-    super.catch(exception, host);
+
+    const responseBody = {
+      statusCode: httpStatus,
+      timestamp: new Date().toISOString(),
+      path: httpAdapter.getRequestUrl(ctx.getRequest()),
+      message,
+    };
+
+    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }
 }

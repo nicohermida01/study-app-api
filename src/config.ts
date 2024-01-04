@@ -14,8 +14,7 @@ export function configApp(app: INestApplication) {
 
   app.setGlobalPrefix('api');
 
-  const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new AllExceptionsFilters(httpAdapter));
+  app.useGlobalFilters(new AllExceptionsFilters(app.get(HttpAdapterHost)));
 
   app.use(cookieParser());
 }
