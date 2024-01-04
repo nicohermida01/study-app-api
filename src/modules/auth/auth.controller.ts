@@ -36,7 +36,7 @@ export class AuthController {
   @Post('login')
   async loginUser(@Body() dto: LoginAuthDto, @Res() res: Response) {
     const foundUser = await this.userService.findOne({
-      email: dto.email,
+      username: dto.username,
     });
 
     const passwordCorrect =

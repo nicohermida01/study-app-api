@@ -9,6 +9,10 @@ export class RegisterAuthDto {
   @IsNotEmpty()
   lastName: string;
 
+  @IsString()
+  @IsNotEmpty()
+  username: string;
+
   @IsNotEmpty()
   @IsEmail()
   email: string;

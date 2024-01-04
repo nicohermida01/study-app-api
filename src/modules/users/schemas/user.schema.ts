@@ -14,16 +14,19 @@ import { HydratedDocument } from 'mongoose';
 })
 export class User {
   @Prop({ required: true })
-  password: string;
+  firstName: string;
+
+  @Prop({ required: true })
+  lastName: string;
+
+  @Prop({ required: true, unique: true })
+  username: string;
 
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop()
-  firstName: string;
-
-  @Prop()
-  lastName: string;
+  @Prop({ required: true })
+  password: string;
 }
 
 export type UserDocument = HydratedDocument<User>;
