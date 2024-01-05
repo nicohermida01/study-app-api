@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
-import { CoursesModule } from './modules/courses/courses.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { CookieModule } from './modules/cookie/cookie.module';
@@ -20,7 +19,6 @@ import { CookieModule } from './modules/cookie/cookie.module';
       },
     }),
     UsersModule,
-    CoursesModule,
     ConfigModule.forRoot(),
     AuthModule,
     CookieModule,
