@@ -13,7 +13,7 @@ export class UsersService {
     return await this.userModel.findOne(filter);
   }
 
-  async create(createUser: IRegisterAuthDto): Promise<User> {
+  async create(createUser: IRegisterAuthDto): Promise<IUser> {
     const createdUser = new this.userModel(createUser);
     return createdUser.save();
   }
