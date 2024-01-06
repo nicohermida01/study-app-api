@@ -3,7 +3,7 @@ import { User } from './schemas/user.schema';
 import { FilterQuery, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { IRegisterAuthDto } from '../auth/dtos/register-auth.dto';
-import { IUser } from './interfaces/user.interface';
+import { IUser, IUserPopulated } from './interfaces/user.interface';
 
 @Injectable()
 export class UsersService {
@@ -20,6 +20,10 @@ export class UsersService {
 
   async findOneById(id: string): Promise<IUser> {
     return await this.userModel.findById(id).exec();
+  }
+
+  async findOneByIdPopulated(id: string): Promise<IUserPopulated> {
+    return await this.userModel.findById(id).populate('nationality').exec();
   }
 
   /* async findByIdAndUpdate(id: string, values: IEditUserDTO): Promise<IUser> {

@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { AllExceptionsFilters } from './middlewares/allExceptionFilter.middleware';
 import * as cookieParser from 'cookie-parser';
@@ -17,4 +17,6 @@ export function configApp(app: INestApplication) {
   app.useGlobalFilters(new AllExceptionsFilters(app.get(HttpAdapterHost)));
 
   app.use(cookieParser());
+
+  app.useGlobalPipes(new ValidationPipe());
 }

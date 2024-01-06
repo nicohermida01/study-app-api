@@ -15,6 +15,14 @@ export class UsersController {
     return user;
   }
 
+  @Get('nationality')
+  @UseGuards(JwtAuthGuard)
+  async getNationality(@ReqUserAuth() userId) {
+    const userPopulated = await this.userService.findOneByIdPopulated(userId);
+
+    return userPopulated.nationality.name;
+  }
+
   @Get('/:id')
   async getUserById(@Param('id') id: string) {
     return await this.userService.findOneById(id);

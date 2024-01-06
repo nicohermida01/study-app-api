@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsMongoId,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+} from 'class-validator';
+import mongoose from 'mongoose';
 
 export class RegisterAuthDto {
   @IsString()
@@ -21,6 +28,10 @@ export class RegisterAuthDto {
   @IsNotEmpty()
   @MinLength(4)
   password: string;
+
+  @IsMongoId()
+  @IsNotEmpty()
+  nationality: mongoose.Schema.Types.ObjectId;
 }
 
 export interface IRegisterAuthDto extends RegisterAuthDto {}
