@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { NationalitiesService } from './nationalities.service';
 import { CreateNationalityDto } from './dtos/createNationality.dto';
+import { Request } from 'express';
 
 @Controller('nationalities')
 export class NationalitiesController {
@@ -18,5 +19,21 @@ export class NationalitiesController {
     const allNationalities = await this.nationalitiesService.findAll();
 
     return allNationalities;
+  }
+
+  @Get('pagination')
+  async getNationalitiesWithPagination(
+    @Query('offset') offset: number,
+    @Query('limit') limit: number,
+  ) {
+    const pagination = await this.nationalitiesService.getWithPagiantion(
+      {},
+      {
+        limit,
+        offset,
+      },
+    );
+
+    return pagination;
   }
 }

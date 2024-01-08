@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { INacionality } from 'src/modules/nationalities/interfaces/nacionality.interface';
+import { INationality } from 'src/modules/nationalities/interfaces/nationality.interface';
 
 export interface IUser {
   firstName: string;
@@ -11,5 +11,5 @@ export interface IUser {
 }
 
 export interface IUserPopulated extends IUser {
-  nationality: INacionality;
+  nationality: INationality;
 }

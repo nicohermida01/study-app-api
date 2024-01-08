@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import * as mongoosePaginate from 'mongoose-paginate-v2';
 
 @Schema({
   timestamps: true,
@@ -11,7 +12,7 @@ import { HydratedDocument } from 'mongoose';
     },
   },
 })
-export class Nacionality {
+export class Nationality {
   @Prop({
     type: String,
     required: true,
@@ -20,5 +21,7 @@ export class Nacionality {
   name: string;
 }
 
-export type NacionalityDocument = HydratedDocument<Nacionality>;
-export const NacionalitySchema = SchemaFactory.createForClass(Nacionality);
+export type NationalityDocument = HydratedDocument<Nationality>;
+export const NationalitySchema = SchemaFactory.createForClass(Nationality);
+
+NationalitySchema.plugin(mongoosePaginate);

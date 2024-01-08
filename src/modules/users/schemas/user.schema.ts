@@ -1,6 +1,6 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { INacionality } from 'src/modules/nationalities/interfaces/nacionality.interface';
+import { INationality } from 'src/modules/nationalities/interfaces/nationality.interface';
 import {
   EMAIL_IS_REQUIRED,
   FIRST_NAME_IS_REQUIRED,
@@ -44,8 +44,8 @@ export class User {
   @Prop({ type: String, required: [true, PASSWORD_IS_REQUIRED] })
   password: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Nacionality' })
-  nationality: INacionality;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Nationality' })
+  nationality: INationality;
 }
 
 export type UserDocument = HydratedDocument<User>;
