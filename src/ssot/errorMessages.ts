@@ -12,3 +12,6 @@ export const INVALID_LOGIN_ERROR_MESSAGE = 'invalid username or password';
 
 export const ACCESS_TOKEN_HAS_EXPIRED = 'accessToken has expired';
 export const ACCESS_TOKEN_MISSING = 'acessToken is missing';
+
+export const INVALID_BODY = 'INVALID_BODY';
+export const USER_NOT_FOUND = 'USER_NOT_FOUND';

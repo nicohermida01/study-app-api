@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Attends } from './schemas/attends.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { IAttends } from './interfaces/attends.interface';
 
 @Injectable()
@@ -13,5 +13,13 @@ export class AttendsService {
   async create(data: IAttends): Promise<IAttends> {
     const cratedAttends = new this.attendsModel(data);
     return cratedAttends.save();
+  }
+
+  async findAllAttendsByUserId(userId: Types.ObjectId) {
+    return await this.attendsModel
+      .find({
+        user: userId,
+      })
+      .exec();
   }
 }
