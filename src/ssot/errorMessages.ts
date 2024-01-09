@@ -9,3 +9,6 @@ export const PASSWORD_IS_REQUIRED = 'Password is required';
 export const MONGOOSE_CAST_ERROR_MESSAGE = 'Id provided is wrong';
 
 export const INVALID_LOGIN_ERROR_MESSAGE = 'invalid username or password';
+
+export const ACCESS_TOKEN_HAS_EXPIRED = 'accessToken has expired';
+export const ACCESS_TOKEN_MISSING = 'acessToken is missing';

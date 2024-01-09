@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import mongoose from 'mongoose';
 
-export class RegisterAuthDto {
+export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   firstName: string;
@@ -33,5 +33,3 @@ export class RegisterAuthDto {
   @IsNotEmpty()
   nationality: mongoose.Schema.Types.ObjectId;
 }
-
-export interface IRegisterAuthDto extends RegisterAuthDto {}

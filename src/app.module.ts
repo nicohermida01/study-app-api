@@ -5,7 +5,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
-import { CookieModule } from './modules/cookie/cookie.module';
 import { NationalitiesModule } from './modules/nationalities/nationalities.module';
 import { TeachersModule } from './modules/teachers/teachers.module';
 import { ClassroomsModule } from './modules/classrooms/classrooms.module';
@@ -16,7 +15,6 @@ import { FriendshipsModule } from './modules/friendships/friendships.module';
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://127.0.0.1/study', {
-      // change into .env
       connectionFactory: (connection) => {
         connection.plugin(require('mongoose-unique-validator'), {
           message: '{PATH} already taken',
@@ -27,7 +25,6 @@ import { FriendshipsModule } from './modules/friendships/friendships.module';
     UsersModule,
     ConfigModule.forRoot(),
     AuthModule,
-    CookieModule,
     NationalitiesModule,
     TeachersModule,
     ClassroomsModule,
