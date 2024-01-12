@@ -7,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { ACCESS_TOKEN_HAS_EXPIRED } from 'src/ssot/errorMessages';
+import { IAccessTokenPayload } from '../auth.service';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -14,6 +15,7 @@ export class JwtGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
@@ -21,9 +23,12 @@ export class JwtGuard implements CanActivate {
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET_KEY,
-      });
+      const payload: IAccessTokenPayload = await this.jwtService.verifyAsync(
+        token,
+        {
+          secret: process.env.JWT_SECRET_KEY,
+        },
+      );
 
       request['user'] = payload;
     } catch (error) {

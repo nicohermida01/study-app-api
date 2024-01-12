@@ -10,6 +10,9 @@ export class Classroom {
 
   @Prop({ type: String, required: true })
   description: string;
+
+  @Prop({ type: String, required: true, unique: true })
+  code: string;
 }
 
 export type ClassroomDocument = HydratedDocument<Classroom>;

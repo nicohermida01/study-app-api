@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
-import { IClassroom } from 'src/modules/classrooms/interfaces/classroom.interface';
-import { ITeacher } from 'src/modules/teachers/interfaces/teacher.interface';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 @Schema({
   timestamps: true,
@@ -13,11 +11,19 @@ export class Teaches {
   @Prop({ type: Date })
   endDate?: Date;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Teacher' })
-  teacher: ITeacher;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Teacher',
+    required: true,
+  })
+  teacher: Types.ObjectId;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Classroom' })
-  classroom: IClassroom;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Classroom',
+    required: true,
+  })
+  classroom: Types.ObjectId;
 }
 
 export type TeachesDocument = HydratedDocument<Teaches>;

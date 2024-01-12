@@ -1,7 +1,6 @@
-import { IUser } from 'src/modules/users/interfaces/user.interface';
+import { Types } from 'mongoose';
 
 export interface IFriendship {
-  userLeft: IUser;
-  userRight: IUser;
-  startDate: Date;
+  userLeft: Types.ObjectId;
+  userRight: Types.ObjectId;
 }

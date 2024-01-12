@@ -1,20 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
-import { IUser } from 'src/modules/users/interfaces/user.interface';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 @Schema({
   timestamps: true,
 })
 export class Friendship {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  userLeft: IUser;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+  userLeft: Types.ObjectId;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  userRight: IUser;
-
-  @Prop({ type: Date, required: true })
-  startDate: Date;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+  userRight: Types.ObjectId;
 }
+
+// validar que userLeft and userRight no pueden ser iguales
+// no puede existir dos entidades que tengan userLeftId igual y userRightId igual
 
 export type FriendshipDocument = HydratedDocument<Friendship>;
 export const FriendshipSchema = SchemaFactory.createForClass(Friendship);

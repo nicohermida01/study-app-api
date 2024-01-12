@@ -12,7 +12,7 @@ export class AttendsService {
 
   async create(data: IAttends): Promise<IAttends> {
     const cratedAttends = new this.attendsModel(data);
-    return cratedAttends.save();
+    return await cratedAttends.save();
   }
 
   async findAllAttendsByUserId(userId: Types.ObjectId) {

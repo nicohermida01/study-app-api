@@ -13,9 +13,10 @@ export class RefreshJwtGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+
     const token = this.extractTokenFromHeader(request);
 
-    if (!token) throw new UnauthorizedException();
+    if (!token) throw new UnauthorizedException('RefreshToken is missing');
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
@@ -24,7 +25,7 @@ export class RefreshJwtGuard implements CanActivate {
 
       request['user'] = payload;
     } catch (error) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('refresh token has expired');
     }
 
     return true;

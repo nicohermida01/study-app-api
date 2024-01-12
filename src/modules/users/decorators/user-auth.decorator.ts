@@ -5,6 +5,7 @@ export const ReqUserAuth = createParamDecorator(
     const http = context.switchToHttp();
     const request = http.getRequest();
     const user = request.user;
+
     return user.userId;
   },
 );

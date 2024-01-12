@@ -6,6 +6,12 @@ import * as bcrypt from 'bcrypt';
 import { INVALID_LOGIN_ERROR_MESSAGE } from 'src/ssot/errorMessages';
 import { JwtService } from '@nestjs/jwt';
 import { ACCESS_TOKEN_EXPIRE_TIME } from 'src/constants';
+import { Types } from 'mongoose';
+
+export interface IAccessTokenPayload {
+  username: string;
+  userId: Types.ObjectId;
+}
 
 @Injectable()
 export class AuthService {
@@ -22,32 +28,11 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.validateUser(dto);
 
-    const payload = {
-      username: user.username,
-      userId: user._id,
-    };
-
-    const accessToken = await this.jwtService.signAsync(payload, {
-      expiresIn: '1h',
-      secret: process.env.JWT_SECRET_KEY,
-    });
-
-    const refreshToken = await this.jwtService.signAsync(payload, {
-      expiresIn: '7d',
-      secret: process.env.JWT_REFRESH_TOKEN_KEY,
-    });
-
-    const expiresIn = new Date().setTime(
-      new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME,
-    );
+    const backendTokens = await this.generateTokens(user);
 
     return {
       user,
-      backendTokens: {
-        accessToken,
-        refreshToken,
-        expiresIn,
-      },
+      backendTokens: backendTokens,
     };
   }
 
@@ -64,13 +49,18 @@ export class AuthService {
   }
 
   async refreshToken(user: any) {
-    const payload = {
+    return await this.generateTokens(user);
+  }
+
+  private async generateTokens(user: any) {
+    const payload: IAccessTokenPayload = {
       username: user.username,
       userId: user._id,
     };
 
     const accessToken = await this.jwtService.signAsync(payload, {
       expiresIn: '1h',
+      /* expiresIn: '20s', // for testing */
       secret: process.env.JWT_SECRET_KEY,
     });
 

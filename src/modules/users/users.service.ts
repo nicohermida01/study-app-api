@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './schemas/user.schema';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { IUser, IUserPopulated } from './interfaces/user.interface';
 import * as bcrypt from 'bcrypt';
@@ -26,7 +26,7 @@ export class UsersService {
     return await this.userModel.findById(id).exec();
   }
 
-  async findOneByIdPopulated(id: string): Promise<IUserPopulated> {
+  async findOneByIdPopulated(id: Types.ObjectId): Promise<IUserPopulated> {
     return await this.userModel.findById(id).populate('nationality').exec();
   }
 
@@ -36,17 +36,7 @@ export class UsersService {
     });
   }
 
-  /* async findByIdAndUpdate(id: string, values: IEditUserDTO): Promise<IUser> {
-    return await this.userModel.findByIdAndUpdate(id, values, {
-      new: true,
-    });
-  } */
-
-  /* async findByIdAndDelete(id: string) {
-    return await this.userModel.findByIdAndDelete(id);
-  } */
-
   async findAll(): Promise<IUser[]> {
-    return this.userModel.find().exec();
+    return await this.userModel.find().exec();
   }
 }

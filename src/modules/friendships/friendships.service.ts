@@ -12,6 +12,6 @@ export class FriendshipsService {
 
   async create(data: IFriendship): Promise<IFriendship> {
     const createdFriendship = new this.friendshipModel(data);
-    return createdFriendship.save();
+    return await createdFriendship.save();
   }
 }

@@ -1,9 +1,8 @@
-import { IClassroom } from 'src/modules/classrooms/interfaces/classroom.interface';
-import { IUser } from 'src/modules/users/interfaces/user.interface';
+import { Types } from 'mongoose';
 
 export interface IAttends {
   entryDate: Date;
   exitDate?: Date;
-  user: IUser;
-  classroom: IClassroom;
+  user: Types.ObjectId;
+  classroom: Types.ObjectId;
 }
