@@ -1,27 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Teaches } from './schemas/teaches.schema';
+import { Teaches, TeachesDocument } from './schemas/teaches.schema';
 import { Model, Types } from 'mongoose';
-import { ITeaches } from './interfaces/teaches.interface';
 
 @Injectable()
 export class TeachesService {
   constructor(
-    @InjectModel(Teaches.name) private teachesModel: Model<Teaches>,
+    @InjectModel(Teaches.name) private teachesModel: Model<TeachesDocument>,
   ) {}
 
-  async findAllByTeacherId(teacherId: Types.ObjectId) {
-    return await this.teachesModel.find({ teacher: teacherId }).exec();
+  async findAllByTeacherId(
+    teacherId: Types.ObjectId,
+  ): Promise<TeachesDocument[]> {
+    return await this.teachesModel
+      .find({ teacherId: teacherId.toHexString() })
+      .exec();
   }
 
   async create(
     teacherId: Types.ObjectId,
     classroomId: Types.ObjectId,
-  ): Promise<ITeaches> {
-    const teaches: ITeaches = {
+  ): Promise<TeachesDocument> {
+    const teaches: Teaches = {
       startDate: new Date(),
-      teacher: teacherId,
-      classroom: classroomId,
+      teacherId: teacherId,
+      classroomId: classroomId,
     };
 
     const createdTeaches = new this.teachesModel(teaches);

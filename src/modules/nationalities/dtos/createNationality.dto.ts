@@ -5,5 +5,3 @@ export class CreateNationalityDto {
   @IsNotEmpty()
   name: string;
 }
-
-export interface ICreateNationalityDto extends CreateNationalityDto {}

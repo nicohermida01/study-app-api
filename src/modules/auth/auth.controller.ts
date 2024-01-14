@@ -1,11 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { LoginDto } from './dtos/login.dto';
 import { USER_REGISTER_SUCCESSFULLY_MESSAGE } from 'src/ssot/successMessages';
 import { CreateUserDto } from '../users/dtos/createUser.dto';
 import { AuthService } from './auth.service';
 import { RefreshJwtGuard } from './guards/refresh.guard';
 import { JwtGuard } from './guards/jwt.guard';
-import { ReqUserAuth } from '../users/decorators/user-auth.decorator';
+import { UserDocument } from '../users/schemas/user.schema';
+import { ReqUserJwt } from './decorators/req-user-jwt.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -28,13 +29,13 @@ export class AuthController {
 
   @Post('refresh')
   @UseGuards(RefreshJwtGuard)
-  async refreshToken(@Req() req) {
-    return await this.authService.refreshToken(req.user);
+  async refreshToken(@ReqUserJwt() user: UserDocument) {
+    return await this.authService.refreshToken(user);
   }
 
   @Get('me')
   @UseGuards(JwtGuard)
-  async authenticateUser(@ReqUserAuth() userId) {
-    return await this.authService.authenticateUser(userId);
+  async authenticateUser(@ReqUserJwt() user: UserDocument) {
+    return await this.authService.authenticateUser(user._id);
   }
 }

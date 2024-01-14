@@ -1,5 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
 import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { Types } from 'mongoose';
 
 /***
  * This class is for validate Mongo ID params
@@ -10,5 +11,5 @@ export class MongoIdDto {
   @IsNotEmpty()
   @IsString()
   @Expose()
-  id: string;
+  id: Types.ObjectId;
 }

@@ -1,7 +1,6 @@
-import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { NationalitiesService } from './nationalities.service';
 import { CreateNationalityDto } from './dtos/createNationality.dto';
-import { Request } from 'express';
 
 @Controller('nationalities')
 export class NationalitiesController {

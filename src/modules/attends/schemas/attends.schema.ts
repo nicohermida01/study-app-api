@@ -12,14 +12,14 @@ export class Attends {
   exitDate?: Date;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-  user: Types.ObjectId;
+  userId: Types.ObjectId;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Classroom',
     required: true,
   })
-  classroom: Types.ObjectId;
+  classroomId: Types.ObjectId;
 }
 
 // no puede haber 2 attends que tengan el mismo userId y mismo classroomId ==> hay que validarlo antes de crearlo

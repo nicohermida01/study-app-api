@@ -6,6 +6,8 @@ import { ClassroomsController } from './classrooms.controller';
 import { JwtService } from '@nestjs/jwt';
 import { TeachesModule } from '../teaches/teaches.module';
 import { TeachersModule } from '../teachers/teachers.module';
+import { AttendsModule } from '../attends/attends.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { TeachersModule } from '../teachers/teachers.module';
     ]),
     TeachesModule,
     TeachersModule,
+    AttendsModule,
+    UsersModule,
   ],
   providers: [ClassroomsService, JwtService],
   controllers: [ClassroomsController],

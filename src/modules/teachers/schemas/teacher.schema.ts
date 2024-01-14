@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, Types } from 'mongoose';
-import { IUser } from 'src/modules/users/interfaces/user.interface';
 
 @Schema({
   timestamps: true,
@@ -18,7 +17,7 @@ export class Teacher {
     required: true,
     unique: true,
   })
-  user: Types.ObjectId;
+  userId: Types.ObjectId;
 }
 
 export type TeacherDocument = HydratedDocument<Teacher>;

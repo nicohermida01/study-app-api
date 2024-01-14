@@ -1,7 +1,7 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { UserParamIdGuard } from '../users/guards/userParamId.guard';
-import { User, UserDocument } from '../users/schemas/user.schema';
+import { UserDocument } from '../users/schemas/user.schema';
 import { ReqUserParam } from '../users/decorators/req-user-param.decorator';
 import { AttendsService } from './attends.service';
 

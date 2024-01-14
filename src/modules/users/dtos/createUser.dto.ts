@@ -1,4 +1,5 @@
 import {
+  IsDateString,
   IsEmail,
   IsMongoId,
   IsNotEmpty,
@@ -29,7 +30,11 @@ export class CreateUserDto {
   @MinLength(4)
   password: string;
 
+  @IsDateString()
+  @IsNotEmpty()
+  dateOfBirth: Date;
+
   @IsMongoId()
   @IsNotEmpty()
-  nationality: mongoose.Schema.Types.ObjectId;
+  nationalityId: mongoose.Schema.Types.ObjectId;
 }

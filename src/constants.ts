@@ -1,4 +1,2 @@
-export const ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60; // expires in 1hour
-/* export const ACCESS_TOKEN_EXPIRE_TIME = 1000 * 20; // expires in 20seconds => for testing */
-
-export const USER_REQUEST_KEY = 'user';
+export const USER_JWT_REQUEST_KEY = 'user-jwt';
+export const USER_PARAM_REQUEST_KEY = 'user-param';

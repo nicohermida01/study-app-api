@@ -12,5 +12,6 @@ import { NationalitiesController } from './nationalities.controller';
   ],
   providers: [NationalitiesService],
   controllers: [NationalitiesController],
+  exports: [NationalitiesService],
 })
 export class NationalitiesModule {}

@@ -8,9 +8,9 @@ import {
 import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import { MongoIdDto } from 'src/common/dtos/mongoId.dto';
-import { INVALID_BODY, USER_NOT_FOUND } from 'src/ssot/errorMessages';
+import { INVALID_BODY, USER_NOT_FOUND } from 'src/ssot/errorCodes';
 import { UsersService } from '../users.service';
-import { USER_REQUEST_KEY } from 'src/constants';
+import { USER_PARAM_REQUEST_KEY } from 'src/constants';
 
 export const strictValidateOrReject = (dto: any) =>
   validateOrReject(dto, {
@@ -39,7 +39,7 @@ export class UserParamIdGuard implements CanActivate {
       throw new NotFoundException(USER_NOT_FOUND);
     }
 
-    request[USER_REQUEST_KEY] = user;
+    request[USER_PARAM_REQUEST_KEY] = user;
 
     return true;
   }

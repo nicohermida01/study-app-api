@@ -3,15 +3,12 @@ import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dtos/createUser.dto';
 import { LoginDto } from './dtos/login.dto';
 import * as bcrypt from 'bcrypt';
-import { INVALID_LOGIN_ERROR_MESSAGE } from 'src/ssot/errorMessages';
 import { JwtService } from '@nestjs/jwt';
-import { ACCESS_TOKEN_EXPIRE_TIME } from 'src/constants';
 import { Types } from 'mongoose';
-
-export interface IAccessTokenPayload {
-  username: string;
-  userId: Types.ObjectId;
-}
+import { UserDocument } from '../users/schemas/user.schema';
+import { INVALID_CREDENTIALS } from 'src/ssot/errorCodes';
+import { IJwtPayload } from './interfaces/jwt-auth-payload.interface';
+import { ACCESS_TOKEN_EXPIRE_TIME } from './constants';
 
 @Injectable()
 export class AuthService {
@@ -43,44 +40,45 @@ export class AuthService {
       user === null ? false : await bcrypt.compare(dto.password, user.password);
 
     if (!(user && passwordCorrect))
-      throw new UnauthorizedException(INVALID_LOGIN_ERROR_MESSAGE);
+      throw new UnauthorizedException(INVALID_CREDENTIALS);
 
     return user;
   }
 
-  async refreshToken(user: any) {
+  async refreshToken(user: UserDocument) {
     return await this.generateTokens(user);
   }
 
-  private async generateTokens(user: any) {
-    const payload: IAccessTokenPayload = {
+  private async generateTokens(user: UserDocument) {
+    const payload: IJwtPayload = {
       username: user.username,
-      userId: user._id,
+      sub: user._id.toHexString(),
     };
 
-    const accessToken = await this.jwtService.signAsync(payload, {
+    const access_token = await this.jwtService.signAsync(payload, {
       expiresIn: '1h',
+      /* expiresIn: '1m', // for testing */
       /* expiresIn: '20s', // for testing */
       secret: process.env.JWT_SECRET_KEY,
     });
 
-    const refreshToken = await this.jwtService.signAsync(payload, {
+    const refresh_token = await this.jwtService.signAsync(payload, {
       expiresIn: '7d',
       secret: process.env.JWT_REFRESH_TOKEN_KEY,
     });
 
-    const expiresIn = new Date().setTime(
+    const expires_at = new Date().setTime(
       new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME,
     );
 
     return {
-      accessToken,
-      refreshToken,
-      expiresIn,
+      access_token,
+      refresh_token,
+      expires_at,
     };
   }
 
-  async authenticateUser(id: string) {
-    return this.userService.findById(id);
+  async authenticateUser(id: Types.ObjectId) {
+    return await this.userService.findById(id);
   }
 }

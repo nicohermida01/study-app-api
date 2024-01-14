@@ -7,9 +7,10 @@ import {
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import {
-  DEFAULT_MESSAGE_ERROR,
-  MONGOOSE_CAST_ERROR_MESSAGE,
-} from 'src/ssot/errorMessages';
+  INTERNAL_SERVER_ERROR,
+  MONGOOSE_ID_CAST_ERROR,
+} from 'src/ssot/errorCodes';
+
 import {
   MONGOOSE_CAST_ERROR,
   MONGOOSE_VALIDATION_ERROR,
@@ -24,28 +25,28 @@ export class AllExceptionsFilters implements ExceptionFilter {
 
     const ctx = host.switchToHttp();
 
-    let message;
+    let errorCode;
     let httpStatus;
 
     if (exception instanceof HttpException) {
       httpStatus = exception.getStatus();
-      message = exception.getResponse()['message'];
+      errorCode = exception.getResponse()['message'];
     } else if (exception.name === MONGOOSE_VALIDATION_ERROR) {
       httpStatus = 400;
-      message = exception.errors[Object.keys(exception.errors)[0]].message;
+      errorCode = exception.errors[Object.keys(exception.errors)[0]].message;
     } else if (exception.name === MONGOOSE_CAST_ERROR) {
       httpStatus = 400;
-      message = MONGOOSE_CAST_ERROR_MESSAGE;
+      errorCode = MONGOOSE_ID_CAST_ERROR;
     } else {
       httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-      message = DEFAULT_MESSAGE_ERROR;
+      errorCode = INTERNAL_SERVER_ERROR;
     }
 
     const responseBody = {
       statusCode: httpStatus,
       timestamp: new Date().toISOString(),
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
-      message,
+      errorCode,
     };
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);

@@ -1,13 +1,14 @@
 import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
-import { INationality } from 'src/modules/nationalities/interfaces/nationality.interface';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import {
-  EMAIL_IS_REQUIRED,
-  FIRST_NAME_IS_REQUIRED,
-  LAST_NAME_IS_REQUIRED,
-  PASSWORD_IS_REQUIRED,
-  USERNAME_IS_REQUIRED,
-} from 'src/ssot/errorMessages';
+  DATE_OF_BIRTH_MISSING,
+  EMAIL_MISSING,
+  FIRST_NAME_MISSING,
+  LAST_NAME_MISSING,
+  NATIONALITY_MISSING,
+  PASSWORD_MISSING,
+  USERNAME_MISSING,
+} from 'src/ssot/errorCodes';
 
 @Schema({
   timestamps: true,
@@ -21,31 +22,41 @@ import {
   },
 })
 export class User {
-  @Prop({ type: String, required: [true, FIRST_NAME_IS_REQUIRED] })
+  @Prop({ type: String, required: [true, FIRST_NAME_MISSING] })
   firstName: string;
 
-  @Prop({ type: String, required: [true, LAST_NAME_IS_REQUIRED] })
+  @Prop({ type: String, required: [true, LAST_NAME_MISSING] })
   lastName: string;
 
   @Prop({
     type: String,
-    required: [true, USERNAME_IS_REQUIRED],
+    required: [true, USERNAME_MISSING],
     unique: true,
   })
   username: string;
 
   @Prop({
     type: String,
-    required: [true, EMAIL_IS_REQUIRED],
+    required: [true, EMAIL_MISSING],
     unique: true,
   })
   email: string;
 
-  @Prop({ type: String, required: [true, PASSWORD_IS_REQUIRED] })
+  @Prop({ type: String, required: [true, PASSWORD_MISSING] })
   password: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Nationality' })
-  nationality: INationality;
+  @Prop({
+    type: Date,
+    required: [true, DATE_OF_BIRTH_MISSING],
+  })
+  dateOfBirth: Date;
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Nationality',
+    required: [true, NATIONALITY_MISSING],
+  })
+  nationalityId: Types.ObjectId;
 }
 
 export type UserDocument = HydratedDocument<User>;

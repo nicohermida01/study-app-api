@@ -13,5 +13,6 @@ import { UsersModule } from '../users/users.module';
   ],
   providers: [AttendsService, JwtService],
   controllers: [AttendsController],
+  exports: [AttendsService],
 })
 export class AttendsModule {}

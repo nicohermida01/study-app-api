@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Friendship } from './schemas/friendship.schema';
+import { Friendship, FriendshipDocument } from './schemas/friendship.schema';
 import { Model } from 'mongoose';
-import { IFriendship } from './interfaces/friendship.interface';
 
 @Injectable()
 export class FriendshipsService {
   constructor(
-    @InjectModel(Friendship.name) private friendshipModel: Model<Friendship>,
+    @InjectModel(Friendship.name)
+    private friendshipModel: Model<FriendshipDocument>,
   ) {}
 
-  async create(data: IFriendship): Promise<IFriendship> {
+  async create(data: any): Promise<FriendshipDocument> {
     const createdFriendship = new this.friendshipModel(data);
     return await createdFriendship.save();
   }

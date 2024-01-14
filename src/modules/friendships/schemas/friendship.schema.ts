@@ -6,10 +6,10 @@ import mongoose, { HydratedDocument, Types } from 'mongoose';
 })
 export class Friendship {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-  userLeft: Types.ObjectId;
+  userLeftId: Types.ObjectId;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-  userRight: Types.ObjectId;
+  userRightId: Types.ObjectId;
 }
 
 // validar que userLeft and userRight no pueden ser iguales
