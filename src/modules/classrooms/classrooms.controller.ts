@@ -1,11 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { ClassroomsService } from './classrooms.service';
 import { CreateClassroomDto } from './dtos/createClassroom.dto';
@@ -16,7 +9,10 @@ import { UserParamIdGuard } from '../users/guards/userParamId.guard';
 import { ReqUserParam } from '../users/decorators/req-user-param.decorator';
 import { UserDocument } from '../users/schemas/user.schema';
 import { TeachesDocument } from '../teaches/schemas/teaches.schema';
-import { ReqUserJwt } from '../auth/decorators/req-user-jwt.decorator';
+import { TeacherGuard } from '../teachers/guards/teacher.guard';
+import { TeacherDocument } from '../teachers/schemas/teacher.schema';
+import { ReqTeacher } from '../teachers/decorators/req-teacher.decorator';
+import { UsersService } from '../users/users.service';
 
 @Controller('classrooms')
 export class ClassroomsController {
@@ -25,6 +21,7 @@ export class ClassroomsController {
     private teachesService: TeachesService,
     private teacherService: TeachersService,
     private attendsService: AttendsService,
+    private userService: UsersService,
   ) {}
 
   @Get('user/:id')
@@ -54,29 +51,50 @@ export class ClassroomsController {
       }
     }
 
-    const classrooms = await this.classroomService.getAllByFilter({
-      _id: {
-        $in: classroomsIds,
+    const classrooms = await this.classroomService.getAllByFilter(
+      {
+        _id: {
+          $in: classroomsIds,
+        },
       },
-    });
+      {
+        sort: {
+          createdAt: -1,
+        },
+      },
+    );
 
-    return classrooms;
+    const classroomsExtend = await Promise.all(
+      classrooms.map(async (item) => {
+        const classroomTeaches = await this.teachesService.findByClassroomId(
+          item._id,
+        );
+        const teacher = await this.teacherService.findById(
+          classroomTeaches.teacherId,
+        );
+        const user = await this.userService.findById(teacher.userId);
+
+        return {
+          name: item.name,
+          description: item.description,
+          area: teacher.area,
+          teacher: `${user.lastName} ${user.firstName}`,
+        };
+      }),
+    );
+
+    return classroomsExtend;
   }
 
   @Post()
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard, TeacherGuard)
   async createClassroom(
-    @ReqUserJwt() user: UserDocument,
+    @ReqTeacher() teacher: TeacherDocument,
     @Body() dto: CreateClassroomDto,
   ) {
-    const relatedTeacher = await this.teacherService.findByUserId(user._id); // create a TeacherGuard for this
-
-    if (!relatedTeacher)
-      throw new BadRequestException('User must be a teacher');
-
     const classroom = await this.classroomService.create(dto);
 
-    await this.teachesService.create(relatedTeacher._id, classroom._id);
+    await this.teachesService.create(teacher._id, classroom._id);
 
     // make a mongoose wrapper for validate all queries are done
 
