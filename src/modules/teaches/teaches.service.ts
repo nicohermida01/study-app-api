@@ -9,6 +9,16 @@ export class TeachesService {
     @InjectModel(Teaches.name) private teachesModel: Model<TeachesDocument>,
   ) {}
 
+  async findByClassAndTeacherId(
+    classroomId: Types.ObjectId,
+    teacherId: Types.ObjectId,
+  ): Promise<TeachesDocument> {
+    return await this.teachesModel.findOne({
+      teacherId,
+      classroomId,
+    });
+  }
+
   async findByClassroomId(id: Types.ObjectId): Promise<TeachesDocument> {
     return await this.teachesModel.findOne({ classroomId: id });
   }

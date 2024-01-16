@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { ClassroomsService } from './classrooms.service';
 import { CreateClassroomDto } from './dtos/createClassroom.dto';
@@ -13,6 +20,11 @@ import { TeacherGuard } from '../teachers/guards/teacher.guard';
 import { TeacherDocument } from '../teachers/schemas/teacher.schema';
 import { ReqTeacher } from '../teachers/decorators/req-teacher.decorator';
 import { UsersService } from '../users/users.service';
+import { ClassroomDocument } from './schemas/classroom.schema';
+import { ClassroomGuard } from './guards/classroom.guard';
+import { ReqClassroom } from './decorators/req-classroom.decorator';
+import { ReqUserJwt } from '../auth/decorators/req-user-jwt.decorator';
+import { USER_NOT_IN_CLASSROOM } from 'src/ssot/errorCodes';
 
 @Controller('classrooms')
 export class ClassroomsController {
@@ -23,6 +35,37 @@ export class ClassroomsController {
     private attendsService: AttendsService,
     private userService: UsersService,
   ) {}
+
+  @Get('auth/:id')
+  @UseGuards(JwtGuard, ClassroomGuard)
+  async verifyUserInClass(
+    @ReqClassroom() classroom: ClassroomDocument,
+    @ReqUserJwt() user: UserDocument,
+  ) {
+    let isInClass = false;
+
+    const teacher = await this.teacherService.findByUserId(user._id);
+
+    if (teacher) {
+      const teaches = await this.teachesService.findByClassAndTeacherId(
+        classroom._id,
+        teacher._id,
+      );
+
+      if (teaches) isInClass = true;
+    }
+
+    const attends = await this.attendsService.findByClassAndUserId(
+      classroom._id,
+      user._id,
+    );
+
+    if (attends) isInClass = true;
+
+    if (!isInClass) throw new UnauthorizedException(USER_NOT_IN_CLASSROOM);
+
+    return classroom;
+  }
 
   @Get('user/:id')
   @UseGuards(JwtGuard, UserParamIdGuard)
@@ -74,11 +117,17 @@ export class ClassroomsController {
         );
         const user = await this.userService.findById(teacher.userId);
 
+        const allAttends = await this.attendsService.findByClassroomId(
+          item._id,
+        );
+
         return {
           name: item.name,
           description: item.description,
           area: teacher.area,
           teacher: `${user.lastName} ${user.firstName}`,
+          membersCount: allAttends.length,
+          id: item._id,
         };
       }),
     );
