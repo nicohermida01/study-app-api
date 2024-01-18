@@ -12,15 +12,15 @@ import {
   ACCESS_TOKEN_MISSING,
   USER_NOT_FOUND,
 } from 'src/ssot/errorCodes';
-import { UsersService } from 'src/modules/users/users.service';
 import { IJwtPayload } from '../interfaces/jwt-auth-payload.interface';
 import { USER_JWT_REQUEST_KEY } from 'src/constants';
+import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private userService: UsersService,
+    private userService: UserService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

@@ -1,19 +1,19 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import { CreateUserDto } from '../users/dtos/createUser.dto';
+import { CreateUserDto } from '../user/dtos/createUser.dto';
 import { LoginDto } from './dtos/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Types } from 'mongoose';
-import { UserDocument } from '../users/schemas/user.schema';
+import { UserDocument } from '../user/schemas/user.schema';
 import { INVALID_CREDENTIALS } from 'src/ssot/errorCodes';
 import { IJwtPayload } from './interfaces/jwt-auth-payload.interface';
 import { ACCESS_TOKEN_EXPIRE_TIME } from './constants';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UsersService,
+    private userService: UserService,
     private jwtService: JwtService,
   ) {}
 

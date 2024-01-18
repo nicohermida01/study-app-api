@@ -4,13 +4,7 @@ import mongoose, { HydratedDocument, Types } from 'mongoose';
 @Schema({
   timestamps: true,
 })
-export class Teaches {
-  @Prop({ type: Date, required: true })
-  startDate: Date;
-
-  @Prop({ type: Date })
-  endDate?: Date;
-
+export class Specialization {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Professor',
@@ -20,11 +14,12 @@ export class Teaches {
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Classroom',
+    ref: 'Subject',
     required: true,
   })
-  classroomId: Types.ObjectId;
+  subjectId: Types.ObjectId;
 }
 
-export type TeachesDocument = HydratedDocument<Teaches>;
-export const TeachesSchema = SchemaFactory.createForClass(Teaches);
+export type SpecializationDocument = HydratedDocument<Specialization>;
+export const SpecializationSchema =
+  SchemaFactory.createForClass(Specialization);

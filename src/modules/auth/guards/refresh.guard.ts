@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { UsersService } from 'src/modules/users/users.service';
 import {
   REFRESH_TOKEN_HAS_EXPIRED,
   REFRESH_TOKEN_MISSING,
@@ -15,12 +14,13 @@ import {
 } from 'src/ssot/errorCodes';
 import { IJwtPayload } from '../interfaces/jwt-auth-payload.interface';
 import { USER_JWT_REQUEST_KEY } from 'src/constants';
+import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
 export class RefreshJwtGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private userService: UsersService,
+    private userService: UserService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

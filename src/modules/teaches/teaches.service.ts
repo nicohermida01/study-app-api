@@ -9,12 +9,12 @@ export class TeachesService {
     @InjectModel(Teaches.name) private teachesModel: Model<TeachesDocument>,
   ) {}
 
-  async findByClassAndTeacherId(
+  async findByClassIdAndProfessorId(
     classroomId: Types.ObjectId,
-    teacherId: Types.ObjectId,
+    professorId: Types.ObjectId,
   ): Promise<TeachesDocument> {
     return await this.teachesModel.findOne({
-      teacherId,
+      professorId,
       classroomId,
     });
   }
@@ -23,21 +23,21 @@ export class TeachesService {
     return await this.teachesModel.findOne({ classroomId: id });
   }
 
-  async findAllByTeacherId(
-    teacherId: Types.ObjectId,
+  async findAllByProfessorId(
+    professorId: Types.ObjectId,
   ): Promise<TeachesDocument[]> {
     return await this.teachesModel
-      .find({ teacherId: teacherId.toHexString() })
+      .find({ professorId: professorId.toHexString() })
       .exec();
   }
 
   async create(
-    teacherId: Types.ObjectId,
+    professorId: Types.ObjectId,
     classroomId: Types.ObjectId,
   ): Promise<TeachesDocument> {
     const teaches: Teaches = {
       startDate: new Date(),
-      teacherId: teacherId,
+      professorId: professorId,
       classroomId: classroomId,
     };
 
