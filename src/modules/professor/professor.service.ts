@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Professor, ProfessorDocument } from './schemas/professor.schema';
 import { Model, Types } from 'mongoose';
 import { CreateProfessorDto } from './dtos/createProfessor.dto';
-
 import { USER_ALREADY_A_PROFESSOR } from 'src/ssot/errorCodes';
 import { SpecializationService } from '../specialization/specialization.service';
+import { IProfessorPopulateUser } from './interfaces/professor.interface';
 
 @Injectable()
 export class ProfessorService {
@@ -21,6 +21,15 @@ export class ProfessorService {
 
   async findById(id: Types.ObjectId): Promise<ProfessorDocument> {
     return await this.professorModel.findById(id).exec();
+  }
+
+  async findByIdAndPopulateUser(
+    professorId: Types.ObjectId,
+  ): Promise<IProfessorPopulateUser> {
+    return (await this.professorModel
+      .findById(professorId)
+      .populate('user')
+      .exec()) as any;
   }
 
   async findByUserId(userId: Types.ObjectId): Promise<ProfessorDocument> {
@@ -44,8 +53,8 @@ export class ProfessorService {
 
     await this.specializationService.createMany(
       dto.subjectIds.map((item) => ({
-        subjectId: item,
-        professorId: newProfessor._id,
+        subject: item,
+        professor: newProfessor._id,
       })),
     );
 

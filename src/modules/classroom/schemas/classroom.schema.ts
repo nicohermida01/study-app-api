@@ -13,6 +13,9 @@ export class Classroom {
 
   @Prop({ type: String, required: true, unique: true })
   code: string;
+
+  @Prop({ type: String, required: true })
+  subject: string;
 }
 
 export type ClassroomDocument = HydratedDocument<Classroom>;

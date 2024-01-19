@@ -56,7 +56,7 @@ export class User {
     ref: 'Nationality',
     required: [true, NATIONALITY_MISSING],
   })
-  nationalityId: Types.ObjectId;
+  nationality: Types.ObjectId;
 }
 
 export type UserDocument = HydratedDocument<User>;

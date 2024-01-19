@@ -9,8 +9,12 @@ export class CourseService {
     @InjectModel(Course.name) private courseModel: Model<CourseDocument>,
   ) {}
 
-  async findByClassroomId(id: Types.ObjectId): Promise<CourseDocument[]> {
-    return await this.courseModel.find({ classroomId: id }).exec();
+  async findAllByClassroomId(
+    classroomId: Types.ObjectId,
+  ): Promise<CourseDocument[]> {
+    return await this.courseModel
+      .find({ classroom: classroomId.toHexString() })
+      .exec();
   }
 
   async findByClassAndUserId(
@@ -18,16 +22,29 @@ export class CourseService {
     userId: Types.ObjectId,
   ): Promise<CourseDocument> {
     return await this.courseModel.findOne({
-      userId,
-      classroomId,
+      user: userId,
+      classroom: classroomId,
     });
   }
 
   async findAllByUserId(userId: Types.ObjectId): Promise<CourseDocument[]> {
     return await this.courseModel
       .find({
-        userId: userId.toHexString(),
+        user: userId.toHexString(),
       })
       .exec();
+  }
+
+  async createOne(
+    userId: Types.ObjectId,
+    classroomId: Types.ObjectId,
+  ): Promise<CourseDocument> {
+    const doc: Course = {
+      status: 'Pending',
+      user: userId,
+      classroom: classroomId,
+    };
+
+    return await this.courseModel.create(doc);
   }
 }

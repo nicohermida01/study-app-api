@@ -15,20 +15,22 @@ export class UserService {
 
   async create(dto: CreateUserDto): Promise<UserDocument> {
     const passwordHashed = await bcrypt.hash(dto.password, 10);
-    dto.password = passwordHashed;
 
-    const createdUser = await this.userModel.create(dto);
+    const doc: User = {
+      ...dto,
+      password: passwordHashed,
+    };
 
-    return createdUser;
+    return await this.userModel.create(doc);
   }
 
-  async findById(id: Types.ObjectId | string): Promise<UserDocument> {
-    return await this.userModel.findById(id).exec();
+  async findById(userId: Types.ObjectId | string): Promise<UserDocument> {
+    return await this.userModel.findById(userId).exec();
   }
 
   async findByUsername(username: string): Promise<UserDocument> {
     return await this.userModel.findOne({
-      username: username,
+      username,
     });
   }
 

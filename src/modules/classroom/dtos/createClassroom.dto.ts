@@ -8,4 +8,8 @@ export class CreateClassroomDto {
   @IsString()
   @IsNotEmpty()
   description: string;
+
+  @IsString()
+  @IsNotEmpty()
+  subject: string;
 }

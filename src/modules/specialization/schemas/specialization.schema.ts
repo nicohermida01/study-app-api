@@ -10,14 +10,14 @@ export class Specialization {
     ref: 'Professor',
     required: true,
   })
-  professorId: Types.ObjectId;
+  professor: Types.ObjectId;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Subject',
     required: true,
   })
-  subjectId: Types.ObjectId;
+  subject: Types.ObjectId;
 }
 
 export type SpecializationDocument = HydratedDocument<Specialization>;

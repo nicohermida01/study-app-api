@@ -1,4 +1,12 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { UserParamIdGuard } from './guards/userParamId.guard';
 import { ReqUserParam } from './decorators/req-user-param.decorator';
@@ -12,6 +20,10 @@ import { CourseService } from '../course/course.service';
 import { ClassroomService } from '../classroom/classroom.service';
 import { ProfessorService } from '../professor/professor.service';
 import { TeachesService } from '../teaches/teaches.service';
+import { SerializeClassroomsInterceptor } from 'src/modules/user/interceptors/serializeClassrooms.intercceptor';
+import { ClassroomDocument } from '../classroom/schemas/classroom.schema';
+import { CreateCourseDto } from '../course/dtos/createCourse.dto';
+import { CLASSROOM_NOT_FOUND } from 'src/ssot/errorCodes';
 
 @Controller('user')
 export class UserController {
@@ -25,18 +37,37 @@ export class UserController {
   ) {}
 
   /**
+   * Crea la entidad Course con el usuario en el access_token y el classroom relacionado con el classroomCode en el dto
+   */
+  @Post('course')
+  @UseGuards(JwtGuard)
+  async createCourse(
+    @Body() dto: CreateCourseDto,
+    @ReqUserJwt() user: UserDocument,
+  ) {
+    const classroom = await this.classroomService.findByClassroomCode(
+      dto.classroomCode,
+    );
+
+    if (!classroom) throw new BadRequestException(CLASSROOM_NOT_FOUND);
+
+    return await this.courseService.createOne(user._id, classroom._id);
+  }
+
+  /**
    * Retorna todas las classrooms asociadas con el usuario en el access_token
    */
   @Get('classrooms')
   @UseGuards(JwtGuard)
+  @UseInterceptors(SerializeClassroomsInterceptor)
   async getClassrooms(@ReqUserJwt() user: UserDocument) {
-    let coursesClass = [];
-    let teachesClass = [];
+    let coursesClass: ClassroomDocument[] = [];
+    let teachesClass: ClassroomDocument[] = [];
 
     const courses = await this.courseService.findAllByUserId(user._id);
     if (courses)
       coursesClass = await this.classroomService.getAllByFilter({
-        id: { $in: courses.map((item) => item.classroomId) },
+        id: { $in: courses.map((item) => item.classroom) },
       });
 
     const professor = await this.professorService.findByUserId(user._id);
@@ -47,7 +78,7 @@ export class UserController {
 
       if (teaches)
         teachesClass = await this.classroomService.getAllByFilter({
-          id: { $in: teaches.map((item) => item.classroomId) },
+          id: { $in: teaches.map((item) => item.classroom) },
         });
     }
 
@@ -64,7 +95,7 @@ export class UserController {
   @UseGuards(JwtGuard, UserParamIdGuard)
   async getProfileData(@ReqUserParam() user: UserDocument) {
     const nationality = await this.nationalityService.findById(
-      user.nationalityId,
+      user.nationality,
     );
 
     const professor = await this.professorService.findByUserId(user._id);
@@ -84,7 +115,7 @@ export class UserController {
   /**
    * Retorna los permisos del usuario obtenido en el access_token
    */
-  @Get('permissions')
+  @Get('me/permissions')
   @UseGuards(JwtGuard)
   async getPermissions(@ReqUserJwt() user: UserDocument) {
     const permissions: IUserPermissions = {

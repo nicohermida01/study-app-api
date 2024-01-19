@@ -12,8 +12,12 @@ export class ClassroomService {
     private classroomModel: Model<ClassroomDocument>,
   ) {}
 
-  async findById(id: Types.ObjectId): Promise<ClassroomDocument> {
-    return await this.classroomModel.findById(id);
+  async findById(classroomId: Types.ObjectId): Promise<ClassroomDocument> {
+    return await this.classroomModel.findById(classroomId);
+  }
+
+  async findByClassroomCode(classroomCode: string): Promise<ClassroomDocument> {
+    return this.classroomModel.findOne({ code: classroomCode });
   }
 
   async getAllByFilter(
@@ -23,13 +27,12 @@ export class ClassroomService {
     return await this.classroomModel.find(filter, {}, options).exec();
   }
 
-  async create(data: CreateClassroomDto): Promise<ClassroomDocument> {
-    const classroom: Classroom = {
-      ...data,
+  async create(dto: CreateClassroomDto): Promise<ClassroomDocument> {
+    const doc: Classroom = {
+      ...dto,
       code: uuidv4(),
     };
 
-    const createdClassroom = new this.classroomModel(classroom);
-    return await createdClassroom.save();
+    return await this.classroomModel.create(doc);
   }
 }

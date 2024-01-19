@@ -14,20 +14,22 @@ export class TeachesService {
     professorId: Types.ObjectId,
   ): Promise<TeachesDocument> {
     return await this.teachesModel.findOne({
-      professorId,
-      classroomId,
+      professor: professorId,
+      classroom: classroomId,
     });
   }
 
-  async findByClassroomId(id: Types.ObjectId): Promise<TeachesDocument> {
-    return await this.teachesModel.findOne({ classroomId: id });
+  async findByClassroomId(
+    classroomId: Types.ObjectId,
+  ): Promise<TeachesDocument> {
+    return await this.teachesModel.findOne({ classroom: classroomId });
   }
 
   async findAllByProfessorId(
     professorId: Types.ObjectId,
   ): Promise<TeachesDocument[]> {
     return await this.teachesModel
-      .find({ professorId: professorId.toHexString() })
+      .find({ professor: professorId.toHexString() })
       .exec();
   }
 
@@ -35,13 +37,12 @@ export class TeachesService {
     professorId: Types.ObjectId,
     classroomId: Types.ObjectId,
   ): Promise<TeachesDocument> {
-    const teaches: Teaches = {
+    const doc: Teaches = {
       startDate: new Date(),
-      professorId: professorId,
-      classroomId: classroomId,
+      professor: professorId,
+      classroom: classroomId,
     };
 
-    const createdTeaches = new this.teachesModel(teaches);
-    return await createdTeaches.save();
+    return await this.teachesModel.create(doc);
   }
 }

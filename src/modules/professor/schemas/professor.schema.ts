@@ -14,7 +14,7 @@ export class Professor {
     required: true,
     unique: true,
   })
-  userId: Types.ObjectId;
+  user: Types.ObjectId;
 }
 
 export type ProfessorDocument = HydratedDocument<Professor>;

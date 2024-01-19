@@ -6,7 +6,7 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 export class CreateUserDto {
   @IsString()
@@ -36,5 +36,5 @@ export class CreateUserDto {
 
   @IsMongoId()
   @IsNotEmpty()
-  nationalityId: mongoose.Schema.Types.ObjectId;
+  nationality: Types.ObjectId;
 }

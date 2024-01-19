@@ -16,14 +16,14 @@ export class Teaches {
     ref: 'Professor',
     required: true,
   })
-  professorId: Types.ObjectId;
+  professor: Types.ObjectId;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Classroom',
     required: true,
   })
-  classroomId: Types.ObjectId;
+  classroom: Types.ObjectId;
 }
 
 export type TeachesDocument = HydratedDocument<Teaches>;
