@@ -47,10 +47,11 @@ export class ProfessorService {
     if (professor) throw new BadRequestException(USER_ALREADY_A_PROFESSOR);
 
     const newProfessor = await this.professorModel.create({
-      userId,
+      user: userId,
       educationInfo: dto.educationInfo,
     });
 
+    // verificar que el profesor y la especializacion no existan
     await this.specializationService.createMany(
       dto.subjectIds.map((item) => ({
         subject: item,
