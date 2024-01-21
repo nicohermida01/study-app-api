@@ -5,7 +5,6 @@ import {
   Get,
   Post,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { UserParamIdGuard } from './guards/userParamId.guard';
@@ -20,10 +19,10 @@ import { CourseService } from '../course/course.service';
 import { ClassroomService } from '../classroom/classroom.service';
 import { ProfessorService } from '../professor/professor.service';
 import { TeachesService } from '../teaches/teaches.service';
-import { SerializeClassroomsInterceptor } from 'src/modules/user/interceptors/serializeClassrooms.intercceptor';
 import { ClassroomDocument } from '../classroom/schemas/classroom.schema';
 import { CreateCourseDto } from '../course/dtos/createCourse.dto';
 import { CLASSROOM_NOT_FOUND } from 'src/ssot/errorCodes';
+import { ICLassroomSerialized } from '../classroom/interfaces/classroomSerialized.interface';
 
 @Controller('user')
 export class UserController {
@@ -55,37 +54,42 @@ export class UserController {
   }
 
   /**
-   * Retorna todas las classrooms asociadas con el usuario en el access_token
+   * Retorna todas las classroomsCourses asociadas con el usuario en el access_token
    */
-  @Get('classrooms')
+  @Get('courses')
   @UseGuards(JwtGuard)
-  @UseInterceptors(SerializeClassroomsInterceptor)
-  async getClassrooms(@ReqUserJwt() user: UserDocument) {
-    let coursesClass: ClassroomDocument[] = [];
-    let teachesClass: ClassroomDocument[] = [];
+  async getCourses(@ReqUserJwt() user: UserDocument) {
+    const coursesPoulated =
+      await this.courseService.findAllByUserIdAndPopulateClass(user._id);
 
-    const courses = await this.courseService.findAllByUserId(user._id);
-    if (courses)
-      coursesClass = await this.classroomService.getAllByFilter({
-        id: { $in: courses.map((item) => item.classroom) },
-      });
+    const classroomsSerialized: ICLassroomSerialized[] = await Promise.all(
+      coursesPoulated.map(async (item) => {
+        const relatedTeache = await this.teachesService.findByClassroomId(
+          item.classroom._id,
+        );
+        const relatedProfessor =
+          await this.professorService.findByIdAndPopulateUser(
+            relatedTeache.professor,
+          );
 
-    const professor = await this.professorService.findByUserId(user._id);
-    if (professor) {
-      const teaches = await this.teachesService.findAllByProfessorId(
-        professor._id,
-      );
+        const allCourses = await this.courseService.findAllByClassroomId(
+          item.classroom._id,
+        );
 
-      if (teaches)
-        teachesClass = await this.classroomService.getAllByFilter({
-          id: { $in: teaches.map((item) => item.classroom) },
-        });
-    }
+        const serialize: ICLassroomSerialized = {
+          name: item.classroom.name,
+          description: item.classroom.description,
+          subject: item.classroom.subject.name,
+          professor: `${relatedProfessor.user.lastName} ${relatedProfessor.user.firstName}`,
+          id: item.classroom._id.toHexString(),
+          membersCount: allCourses.length,
+        };
 
-    return {
-      coursesClass,
-      teachesClass,
-    };
+        return serialize;
+      }),
+    );
+
+    return classroomsSerialized;
   }
 
   /**
@@ -105,7 +109,7 @@ export class UserController {
       nationality: nationality.name,
       email: user.email,
       dateOfBirth: user.dateOfBirth,
-      isTeacher: !!professor,
+      isProfessor: !!professor,
       username: user.username,
     };
 

@@ -4,7 +4,8 @@ import {
   Specialization,
   SpecializationDocument,
 } from './schemas/specialization.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import { ISpecializationPopulated } from './interfaces/specializationPopulated.interface';
 
 @Injectable()
 export class SpecializationService {
@@ -12,6 +13,15 @@ export class SpecializationService {
     @InjectModel(Specialization.name)
     private specializationModel: Model<SpecializationDocument>,
   ) {}
+
+  async findAllByProfessorIdAndPopulateSubject(
+    professorId: Types.ObjectId,
+  ): Promise<ISpecializationPopulated[]> {
+    return this.specializationModel
+      .find({ professor: professorId })
+      .populate('subject')
+      .exec() as any;
+  }
 
   async createMany(docs: Specialization[]) {
     return await this.specializationModel.create(docs);

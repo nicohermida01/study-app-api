@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateClassroomDto {
   @IsString()
@@ -9,7 +10,7 @@ export class CreateClassroomDto {
   @IsNotEmpty()
   description: string;
 
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  subject: string;
+  subject: Types.ObjectId;
 }

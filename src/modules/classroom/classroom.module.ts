@@ -7,6 +7,7 @@ import { TeachesModule } from '../teaches/teaches.module';
 import { JwtService } from '@nestjs/jwt';
 import { UserModule } from '../user/user.module';
 import { ProfessorModule } from '../professor/professor.module';
+import { CourseModule } from '../course/course.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ProfessorModule } from '../professor/professor.module';
     TeachesModule,
     forwardRef(() => UserModule),
     ProfessorModule,
+    CourseModule,
   ],
   controllers: [ClassroomController],
   providers: [ClassroomService, JwtService],

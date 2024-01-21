@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Teaches, TeachesDocument } from './schemas/teaches.schema';
 import { Model, Types } from 'mongoose';
+import { ITeachesPopulatedClass } from './interface/teachesPopulated.interface';
 
 @Injectable()
 export class TeachesService {
@@ -31,6 +32,18 @@ export class TeachesService {
     return await this.teachesModel
       .find({ professor: professorId.toHexString() })
       .exec();
+  }
+
+  async findAllByProfessorIdAndPopulateClass(
+    professorId: Types.ObjectId,
+  ): Promise<ITeachesPopulatedClass[]> {
+    return (await this.teachesModel
+      .find({ professor: professorId })
+      .populate({
+        path: 'classroom',
+        populate: { path: 'subject' },
+      })
+      .exec()) as any;
   }
 
   async create(

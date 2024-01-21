@@ -34,7 +34,7 @@ export class ProfessorService {
 
   async findByUserId(userId: Types.ObjectId): Promise<ProfessorDocument> {
     return await this.professorModel.findOne({
-      userId: userId.toHexString(),
+      user: userId.toHexString(),
     });
   }
 

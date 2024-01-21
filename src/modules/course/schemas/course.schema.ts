@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 const courseStatus = ['Pending', 'Rejected', 'Accepted'] as const;
-type CourseStatus = typeof courseStatus[number];
+export type CourseStatus = typeof courseStatus[number];
 
 @Schema({
   timestamps: true,
