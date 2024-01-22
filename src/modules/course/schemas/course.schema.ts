@@ -21,6 +21,9 @@ export class Course {
   @Prop({ type: Date })
   exitDate?: Date;
 
+  @Prop({ type: Date })
+  rejectedDate?: Date;
+
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

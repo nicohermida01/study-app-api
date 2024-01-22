@@ -42,9 +42,10 @@ export class ProfessorController {
             relatedTeache.professor,
           );
 
-        const allCourses = await this.courseService.findAllByClassroomId(
-          item.classroom._id,
-        );
+        const allCourses =
+          await this.courseService.findAllAcceptedByClassroomId(
+            item.classroom._id,
+          );
 
         const serialize: ICLassroomSerialized = {
           name: item.classroom.name,

@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Course, CourseDocument } from './schemas/course.schema';
-import { FilterQuery, Model, Types } from 'mongoose';
-import { ICoursePopulateClass } from './interfaces/coursePopulated.interface';
+import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
+import {
+  ICoursePopulateClass,
+  ICoursePopulateUser,
+} from './interfaces/coursePopulated.interface';
 
 @Injectable()
 export class CourseService {
@@ -10,15 +13,45 @@ export class CourseService {
     @InjectModel(Course.name) private courseModel: Model<CourseDocument>,
   ) {}
 
+  async accept(courseId: Types.ObjectId): Promise<CourseDocument> {
+    const update: UpdateQuery<CourseDocument> = {
+      status: 'Accepted',
+      entryDate: new Date(),
+    };
+
+    return await this.courseModel.findByIdAndUpdate(courseId, update).exec();
+  }
+
+  async reject(courseId: Types.ObjectId) {
+    const update: UpdateQuery<CourseDocument> = {
+      status: 'Rejected',
+      rejectedDate: new Date(),
+    };
+
+    return await this.courseModel.findByIdAndUpdate(courseId, update).exec();
+  }
+
+  async findById(courseId: Types.ObjectId): Promise<CourseDocument> {
+    return await this.courseModel.findById(courseId);
+  }
+
   async findAllPendingForClassroom(
     classroomId: Types.ObjectId,
-  ): Promise<CourseDocument[]> {
+  ): Promise<ICoursePopulateUser[]> {
     const filter: FilterQuery<CourseDocument> = {
       classroom: classroomId,
       status: 'Pending',
     };
 
-    return await this.courseModel.find(filter).exec();
+    return (await this.courseModel.find(filter).populate('user').exec()) as any;
+  }
+
+  async findAllAcceptedByClassroomId(
+    classroomId: Types.ObjectId,
+  ): Promise<CourseDocument[]> {
+    return await this.courseModel
+      .find({ classroom: classroomId.toHexString(), status: 'Accepted' })
+      .exec();
   }
 
   async findAllByClassroomId(

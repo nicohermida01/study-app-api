@@ -19,7 +19,6 @@ import { CourseService } from '../course/course.service';
 import { ClassroomService } from '../classroom/classroom.service';
 import { ProfessorService } from '../professor/professor.service';
 import { TeachesService } from '../teaches/teaches.service';
-import { ClassroomDocument } from '../classroom/schemas/classroom.schema';
 import { CreateCourseDto } from '../course/dtos/createCourse.dto';
 import { CLASSROOM_NOT_FOUND } from 'src/ssot/errorCodes';
 import { ICLassroomSerialized } from '../classroom/interfaces/classroomSerialized.interface';
@@ -72,9 +71,10 @@ export class UserController {
             relatedTeache.professor,
           );
 
-        const allCourses = await this.courseService.findAllByClassroomId(
-          item.classroom._id,
-        );
+        const allCourses =
+          await this.courseService.findAllAcceptedByClassroomId(
+            item.classroom._id,
+          );
 
         const serialize: ICLassroomSerialized = {
           name: item.classroom.name,

@@ -21,6 +21,10 @@ import { ClassroomDocument } from './schemas/classroom.schema';
 import { CourseService } from '../course/course.service';
 import { ProfessorService } from '../professor/professor.service';
 import { UNAUTHORIZED, USER_NOT_IN_CLASSROOM } from 'src/ssot/errorCodes';
+import { ICourseRequest } from '../course/interfaces/courseRequest.interface';
+import { CourseDocument } from '../course/schemas/course.schema';
+import { CourseGuard } from '../course/guards/course.guard';
+import { ReqCourseParam } from '../course/decorators/req-course.decorator';
 
 @Controller('classroom')
 export class ClassroomController {
@@ -32,12 +36,44 @@ export class ClassroomController {
   ) {}
 
   /**
+   * Cambia el estado del course relacionado con el id en queryParams a "Reject"
+   */
+  @Post('request/reject/:id')
+  @UseGuards(JwtGuard, ProfessorGuard, CourseGuard)
+  async rejectRequest(@ReqCourseParam() course: CourseDocument) {
+    return await this.courseService.reject(course._id);
+  }
+
+  /**
+   * Cambia el estado del course relacionado con el id en queryParams a "Accept"
+   */
+  @Post('request/accept/:id')
+  @UseGuards(JwtGuard, ProfessorGuard, CourseGuard)
+  async acceptRequest(@ReqCourseParam() course: CourseDocument) {
+    return await this.courseService.accept(course._id);
+  }
+
+  /**
    * Devuelve las coursesRequest (status === pending) de la classroom asociada al queryParams id
    */
   @Get('requests/:id')
   @UseGuards(JwtGuard, ProfessorGuard, ClassroomGuard)
-  async getRequests(@ReqClassroom() classroom: ClassroomDocument) {
-    return await this.courseService.findAllPendingForClassroom(classroom._id);
+  async getRequests(
+    @ReqClassroom() classroom: ClassroomDocument,
+  ): Promise<ICourseRequest[]> {
+    const courseRequests = await this.courseService.findAllPendingForClassroom(
+      classroom._id,
+    );
+
+    return courseRequests.map((item) => {
+      const req: ICourseRequest = {
+        name: `${item.user.firstName} ${item.user.lastName}`,
+        courseId: item._id.toHexString(),
+        username: item.user.username,
+      };
+
+      return req;
+    });
   }
 
   /**
