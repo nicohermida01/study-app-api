@@ -1,7 +1,6 @@
-version: '3.9'
 services:
   studyapi:
-    container_name: study-service
+    container_name: study-api
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,40 +10,13 @@ services:
     volumes:
       - .:/myapp
       - /myapp/node_modules
-    depends_on:
-      - mongodb
-    restart: always
     networks:
       - study_network
-
-  mongodb:
-    image: mongo:latest
-    container_name: study-db
-    restart: always
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=admin
-    ports:
-      - 27017:27017
-    volumes:
-      - './populate-db.sh:/scripts/populate-db.sh'
-    networks:
-      - study_network
-
-  mongo-express:
-    image: mongo-express:latest
-    container_name: mongo-express
-    restart: always
-    environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=admin
-      - ME_CONFIG_MONGODB_SERVER=mongodb
-      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
-      - ME_CONFIG_MONGODB_PORT=27017
-    ports:
-      - '8081:8081'
-    networks:
-      - study_network
+    labels:
+      - 'traefik.bar.frontend.rule=PathPrefix:/api/'
+      - 'traefik.bar.port=8001'
+    extra_hosts:
+      - 'docker.localhost:host-gateway'
 
 networks:
   study_network:
