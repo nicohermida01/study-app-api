@@ -1,0 +1,284 @@
+info:
+  title: Study API
+  version: 1.0.0
+  base_url: /api
+paths:
+  /auth:
+    /register:
+      info: 'Permite registrar un nuevo usuario'
+      request:
+        type: 'POST'
+        body:
+          firstName: primer nombre del usuario
+          lastName: apellido del usuario
+          username: nombre de usuario
+          email: correo electronico
+          password: contraseña del usuario
+          dateOfBirth: fecha de nacimiento
+          nationality: Pais de origen del usuario. Entidad Nationality. 
+      response:
+        body:
+          message: mensaje de exito
+          user: usuario registrado. Entidad User
+    /login:
+      info: 'Loggea un usuario. Genera 2 tokens para usarlos como autenticidad en futuras requests.'
+      request:
+        type: 'POST'
+        body:
+          username: nombre de usuario
+          password: contraseña del usuario
+      response:
+        body:
+          user: User
+          backendTokens:
+            access_token: token de sesion
+            refresh_token: token de refresh
+            expires_at: vencimiento del token de sesion
+    /refresh:
+      info: 'Extiende la durabilidad del access_token.'
+      request:
+        type: 'POST'
+        headers:
+          authorization: 'Refresh {refresh_token}'
+      response:
+        body:
+          access_token: token de sesion
+          refresh_token: token de refresh
+          expires_at: vencimiento del token de sesion
+    /me:
+      info: 'Verifica la autenticidad del access_token.'
+      request:
+        type: 'GET'
+        headers:
+          authorization: 'Bearer {access_token}'
+      response:
+        body:
+          user: usuario autenticado.
+  /classroom:
+    /request/reject/:id:
+      info: Rechaza la solicitud para ingresar al Classroom. La request la debe hacer el profesor a cargo.
+      request:
+        type: 'POST'
+        headers:
+          authorization: 'Bearer {access_token}'
+        params:
+          id: identificador de la cursada (Course)
+      response:
+        body:
+          course: cursada rechazada
+    /request/accept/:id:
+      info: Acepta la solicitud para ingresar al Classroom. La request la debe hacer el profesor a cargo.
+      request:
+        type: 'POST'
+        headers:
+          authorization: 'Bearer {access_token}'
+        params:
+          id: identificador de la cursada (Course)
+      response:
+        body:
+          course: cursada aceptada
+    /requests/:id:
+      info: Devuelve las solicitudes pendientes de usuarios q quieren entrar al Classroom. La request la debe realizar el profesor a cargo.
+      request:
+        type: 'GET'
+        headers:
+          authorization: 'Bearer {access_token}'
+        params:
+          id: identificador del Classroom
+      response:
+        body:
+          requests: Arreglo de solicitudes
+            name: nombre completo del usuario
+            courseId: identificador de la cursada pendiente
+            username: nombre de usuario
+    /professor/auth/:id:
+      info: Verifica que el usuario sea el professor correspondiente del Classroom.
+      request:
+        type: 'GET'
+        headers:
+          authorization: 'Bearer {access_token}'
+        params:
+          id: identificador del Classroom
+      response:
+        body:
+          teaches: Relacion "Enseña"
+    /auth/:id:
+      info: Verifica que el usuario tenga una relacion (Course o Teaches) con el Classroom.
+      request:
+        type: 'GET'
+        params:
+          id: identificador del Classroom
+        headers:
+          authorization: 'Bearer {access_token}'
+      response:
+        body:
+          classroom: Entidad "Sala de clases"
+          rol: Student o Professor
+    /:
+      info: Permite crear un Classroom. El usuario que realiza la request debe ser Professor. Devuelve un codigo de Classroom que permite a otros usuarios unirse.
+      request:
+        type: 'POST'
+        headers:
+          authorization: 'Bearer {access_token}'
+        body:
+          name: nombre del Classroom
+          description: descripcion del Classroom
+          subject: materia que se enseña en el Classroom
+      response:
+        body:
+          code: codigo del Classroom
+  /nationality:
+    /: 
+      info: Crea las entidades Nationality.
+      request:
+        type: POST
+        body:
+          names: arreglo de nombres de nacionalidades. No se pueden repetir
+      response:
+        nationalities: arreglo de entidades Nationality creadas.
+    /all:
+      info: Devuelve todas las entidades Nationalities existentes
+      request: 
+        type: GET
+      response:
+        nationalities: arreglo de entidades Nationality
+    /all/pagination:
+      info: Devuelve las Nationalities segun el filtro de paginacion.
+      request:
+        type: GET
+        query:
+          offset: numero de comienzo de la paginacion
+          limit: cantidad limite de elementos a devolver
+      response:
+        pagination: paginacion de las nationalities
+  /professor:
+    /teaches:
+      info: Devuelve todas las relaciones Teaches del profesor q realiza la request
+      request:
+        type: GET
+        headers:
+          authorization: 'Bearer {access_token}'
+      response: Arreglo de las clases q enseña el profesor
+        name: nombre de la clase
+        description: descripcion de la clase
+        subject: materia de la clase
+        professor: nombre completo del profesor de la clase
+        id: identificador de la clase
+        membersCount: numero de cursantes de la clase
+    /subjects:
+      info: Devuelve todas las materias que enseña el profesor que realiza la request.
+      request:
+        type: GET
+        headers:
+          authorization: 'Bearer {access_token}'
+      response:
+        body: arreglo de materias
+          name: nombre de la materia
+          id: identificador de la materia
+    /all:
+      info: Devuelve todos los profesores existentes.
+      request:
+        type: POST
+      response:
+        body: arreglo de profesores
+    /:
+      info: Permite convertir al usuario que realiza la request en Professor
+      request:
+        type: POST
+        headers:
+          authorization: 'Bearer {access_token}'
+        body: datos para crear la entidad Professor
+          educationInfo: informacion de educacion para profesor del usuario.
+          subjectIds: arreglo de ids de materias que se especializa el usuario.
+      response:
+        body: entidad Professor creada.
+  /subject:
+    /:
+      info: Crea las entidades Subject
+      request:
+        type: POST
+        body: arreglo de nombres de materias
+          name: nombre de la materia
+      response:
+        body: arreglo de entidades Subject creadas.
+    /all:
+      info: Devuelve las entidades Subject existentes.
+      request:
+        type: GET
+      response:
+        body: arreglo de entidades Subject.
+    /all/pagination:
+      info: Devuelve todos los Subjects existenes segun el filtro de paginacion
+      request:
+        type: GET
+        query:
+          offset: numero de comienzo de la paginacion
+          limit: cantidad limite de elementos a devolver
+      response:
+        body: paginacion de Subjects
+  /user:
+    /course:
+      info: Crea la realacion Course con el usuario que realiza la request y el classroom.
+      request:
+        type: POST
+        headers:
+          authorization: 'Bearer {access_token}'
+        body:
+          classroomCode: codigo para ingresar a la clase.
+      response:
+        body: entidad Course creada.
+    /courses:
+      info: Devuelve todas las cursadas que tiene el usuario.
+      request:
+        type: GET
+        headers:
+          authorization: 'Bearer {access_token}'
+      response:
+        body: arreglo de cursadas
+          name: nombre de la clase
+          description: descripcion de la clase
+          subject: materia de la clase
+          proessor: nombre completo del profesor
+          id: identificador de la clase
+          membersCount: numero de cursantes de la clase.
+    /profile/:id:
+      info: Devuelve los datos del usuario pasado por params.
+      request:
+        type: GET
+        headers:
+          authorization: 'Bearer {access_token}'
+        params:
+          id: identificador del usuario a buscar.
+      response:
+        body: 
+          fullName: nombre completo del usuario
+          nationality: nacionalidad
+          email: correo electronico del usuario
+          dateOfBirth: fecha de nacimiento
+          isProfessor: si es profesor o no
+          username: nombre de usuario.
+    /me/permissions:
+      info: Devuelve los permisos del usuario q realiza la request.
+      request:
+        type: GET
+        headers:
+          authorization: 'Bearer {access_token}'
+      response:
+        body:
+          canCreateClassrooms: si puede crear clases o no
+    /:id:
+      info: Devuelve la entidad User relacionado con el id en params
+      request:
+        type: GET
+        headers:
+          authorization: 'Bearer {access_token}'
+        params: 
+          id: identificador del usuario a buscar.
+      response:
+        body: entidad User.
+    /:
+      info: Devuelve todos los usuarios existentes
+      request:
+        type: GET
+      response:
+        body: arreglo de entidades User

@@ -96,7 +96,7 @@ export class ClassroomController {
   }
 
   /**
-   * Verifica que el usuario en el access_token tenga una cursada en el classroom relacionado con el id en queryParams
+   * Verifica que el usuario tenga una relacion (Course o Teaches) con el Classroom.
    */
   @Get('auth/:id')
   @UseGuards(JwtGuard, ClassroomGuard)
