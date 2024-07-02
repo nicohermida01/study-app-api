@@ -131,6 +131,7 @@ export class UserController {
       dateOfBirth: user.dateOfBirth,
       isProfessor: !!professor,
       username: user.username,
+      avatarNum: user.avatarNum,
     };
 
     return profileData;

@@ -8,4 +8,5 @@ export interface IProfileData {
   dateOfBirth: Date;
   isProfessor: boolean;
   username: string;
+  avatarNum: string;
 }

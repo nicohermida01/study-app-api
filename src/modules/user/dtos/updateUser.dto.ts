@@ -32,4 +32,8 @@ export class updateUserDTO {
   @IsMongoId()
   @IsOptional()
   nationality?: Types.ObjectId;
+
+  @IsString()
+  @IsOptional()
+  avatarNum?: string;
 }

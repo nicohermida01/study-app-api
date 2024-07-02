@@ -251,12 +251,14 @@ paths:
           id: identificador del usuario a buscar.
       response:
         body: 
-          fullName: nombre completo del usuario
+          firstName: nombre
+          lastName: apellido
           nationality: nacionalidad
           email: correo electronico del usuario
           dateOfBirth: fecha de nacimiento
           isProfessor: si es profesor o no
-          username: nombre de usuario.
+          username: nombre de usuario
+          avatarNum: numero de avatar
     /me/permissions:
       info: Devuelve los permisos del usuario q realiza la request.
       request:
@@ -295,6 +297,7 @@ paths:
           email: correo electronico
           dateOfBirth: fecha de nacimiento
           nationality: identificador de la nacionalidad
+          avatarNum: numero de avatar
       response:
         body:
           message: mensaje de exito

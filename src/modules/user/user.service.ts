@@ -26,6 +26,7 @@ export class UserService {
     const doc: User = {
       ...dto,
       password: passwordHashed,
+      avatarNum: '1',
     };
 
     return await this.userModel.create(doc);

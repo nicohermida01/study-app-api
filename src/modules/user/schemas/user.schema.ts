@@ -57,6 +57,11 @@ export class User {
     required: [true, NATIONALITY_MISSING],
   })
   nationality: Types.ObjectId;
+
+  @Prop({
+    type: String,
+  })
+  avatarNum: string;
 }
 
 export type UserDocument = HydratedDocument<User>;
