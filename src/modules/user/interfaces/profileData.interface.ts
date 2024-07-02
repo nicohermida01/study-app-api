@@ -1,6 +1,9 @@
+import { NationalityDocument } from 'src/modules/nationality/schemas/nationality.schema';
+
 export interface IProfileData {
-  fullName: string;
-  nationality: string;
+  firstName: string;
+  lastName: string;
+  nationality: NationalityDocument;
   email: string;
   dateOfBirth: Date;
   isProfessor: boolean;

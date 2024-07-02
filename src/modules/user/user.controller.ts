@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { JwtGuard } from '../auth/guards/jwt.guard';
@@ -20,8 +21,10 @@ import { ClassroomService } from '../classroom/classroom.service';
 import { ProfessorService } from '../professor/professor.service';
 import { TeachesService } from '../teaches/teaches.service';
 import { CreateCourseDto } from '../course/dtos/createCourse.dto';
-import { CLASSROOM_NOT_FOUND } from 'src/ssot/errorCodes';
+import { CLASSROOM_NOT_FOUND, USER_NOT_FOUND } from 'src/ssot/errorCodes';
 import { ICLassroomSerialized } from '../classroom/interfaces/classroomSerialized.interface';
+import { updateUserDTO } from './dtos/updateUser.dto';
+import { USER_UPDATED_SUCCESSFULLY_MESSAGE } from 'src/ssot/successMessages';
 
 @Controller('user')
 export class UserController {
@@ -92,6 +95,22 @@ export class UserController {
     return classroomsSerialized;
   }
 
+  @Put()
+  @UseGuards(JwtGuard)
+  async updateUser(
+    @ReqUserJwt() user: UserDocument,
+    @Body() dto: updateUserDTO,
+  ) {
+    const updatedUser = await this.userService.findByIdAndUpdate(user._id, dto);
+
+    if (!updatedUser) throw new BadRequestException(USER_NOT_FOUND);
+
+    return {
+      message: USER_UPDATED_SUCCESSFULLY_MESSAGE,
+      user: updatedUser,
+    };
+  }
+
   /**
    * Retorna datos del usuario obtenido a traves del id de la url para ser usados en la pagina "Perfil del usuario"
    */
@@ -105,8 +124,9 @@ export class UserController {
     const professor = await this.professorService.findByUserId(user._id);
 
     const profileData: IProfileData = {
-      fullName: `${user.firstName} ${user.lastName}`,
-      nationality: nationality.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      nationality: nationality,
       email: user.email,
       dateOfBirth: user.dateOfBirth,
       isProfessor: !!professor,

@@ -1,13 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schema';
-import { FilterQuery, Model, Types } from 'mongoose';
+import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
 import { CreateUserDto } from './dtos/createUser.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+
+  async findByIdAndUpdate(
+    id: Types.ObjectId,
+    updateQuery: UpdateQuery<UserDocument>,
+  ): Promise<UserDocument> {
+    return await this.userModel.findByIdAndUpdate(id, updateQuery);
+  }
 
   async findOne(filter: FilterQuery<UserDocument>): Promise<UserDocument> {
     return await this.userModel.findOne(filter);
