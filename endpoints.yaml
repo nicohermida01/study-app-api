@@ -282,3 +282,20 @@ paths:
         type: GET
       response:
         body: arreglo de entidades User
+    /:
+      info: Actualiza los datos del usuario
+      request:
+        type: PUT
+        headers:
+          authorization: 'Bearer {access_token}'
+        body: (todos los campos son opcionales)
+          firstName: nombre
+          lastName: apellido
+          username: nombre de usuario
+          email: correo electronico
+          dateOfBirth: fecha de nacimiento
+          nationality: identificador de la nacionalidad
+      response:
+        body:
+          message: mensaje de exito
+          user: usuario actualizado
